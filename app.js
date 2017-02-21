@@ -1,6 +1,3 @@
-// 절대 경로 체크
-global.__base = __dirname + "/";
-
 var passport = require('passport');
 var express = require('express');
 var path = require('path');
