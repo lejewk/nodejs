@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+<h1><%= title %></h1>
+<p>Session login</p>
+<% if (user != null) { %>
+Current User : <%= user.id %>
+<form action="/logout" method="post">
+    <input type="submit" value="Logout"/>
+</form>
+<% } else { %>
+<form action="/login" method="post">
+    <input type="text" name="id"/>
+    <input type="password" name="password"/>
+    <input type="submit" value="Login"/>
+</form>
+<% } %>
+
+<hr>
+<p>Tokken login</p>
+<div id="tokenLoginLayer" style="display:none;">
+    <form id="tokenForm" action="/token" method="post" onsubmit="return false;">
+        <input type="text" name="username"/>
+        <input type="password" name="password"/>
+        <input id="tokenLoginButton" type="submit" value="Token login"/>
+    </form>
+</div>
+<div id="tokenLogoutLayer" style="display:none;">
+    Current user : <span id="name"></span> <button id="tokenLogoutButton">Token logout</button>
+</div>
+
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    (function() {
+    	var token = localStorage.getItem("token");
+    	if (localStorage.getItem("token") == null) {
+		    $("#tokenLoginLayer").css("display", "");
+        } else {
+		    $("#tokenLogoutLayer").css("display", "");
+
+		    $.ajax({
+			    type: "get",
+			    url: "/profile",
+			    dataType: "json",
+                // 해더 암호화처리
+                beforeSend: function(xhr) {
+			        xhr.setRequestHeader("Authorization", "JWT " + token);
+                }
+		    }).done(function(response) {
+			    $("#name").text(response.name)
+            }).fail(function(response) {
+            	console.log(response);
+            });
+	    }
+    })();
+
+	$("#tokenLoginButton").click(function() {
+		$.post('/token', $("#tokenForm").serialize(), function(response) {
+            localStorage.setItem('token', response.token);
+			location.reload();
+		}, 'json').fail(function(response) {
+            alert(response.responseText);
+        });
+    });
+
+	$("#tokenLogoutButton").click(function() {
+		localStorage.clear();
+		location.reload();
+    });
+});
+</script>
+</body>
+</html>
