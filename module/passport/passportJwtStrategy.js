@@ -6,11 +6,11 @@ var passport = require('passport');
 var Strategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 
-var users = require(__base + 'users');
-var config = require(__base + 'config');
+var users = require('../../users');
+var config = require('../../config');
 
 var options = {
-	secretOrKey : config.jwtSecret,
+	secretOrKey : config.jwt.secret,
 	jwtFromRequest : ExtractJwt.fromAuthHeader()
 };
 

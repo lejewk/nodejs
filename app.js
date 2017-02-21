@@ -8,7 +8,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var expressSession = require('express-session');
 var config = require('./config');
 
 var index = require('./routes/index');
@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 세션 셋팅
-app.use(session(config.localSessionOption));
+app.use(expressSession(config.localSessionOption));
 
 app.use(passport.initialize());
 

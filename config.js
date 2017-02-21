@@ -4,7 +4,10 @@
 
 module.exports = {
 	// token 암호화키
-	jwtSecret: "happytuk@5377@3813!jwt",
+	jwt : {
+		secret: "happytuk@5377@3813!jwt",
+		jwtExp1H : 3600
+	},
 	
 	// local session 정보
 	localSessionOption: {

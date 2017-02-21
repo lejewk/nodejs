@@ -1,15 +1,15 @@
 var express = require('express');
 var passport = require('passport');
-var jsonwebtoken = require('jsonwebtoken');
+var utilJwt = require('../module/util/utilJwt');
 
-var utilRequest = require(__base + 'module/util/utilRequest');
-var users = require(__base + 'users');
-var config = require(__base + 'config');
+var utilRequest = require('../module/util/utilRequest');
+var users = require('../users');
+var config = require('../config');
 
 // 세션 처리
-var passportLocalStrategy = require(__base + 'module/passport/passportLocalStrategy');
+var passportLocalStrategy = require('../module/passport/passportLocalStrategy');
 // 토큰 처리
-var passportJwtStrategy = require(__base + 'module/passport/passportJwtStrategy');
+var passportJwtStrategy = require('../module/passport/passportJwtStrategy');
 
 
 var router = express.Router();
@@ -48,7 +48,7 @@ router.post('/token', function (req, res, next) {
 				id: user.id
 			};
 			
-			var token = jsonwebtoken.sign(payload, config.jwtSecret, {expiresIn: 30});
+			var token = utilJwt.sign(payload);
 			
 			res.json({
 				token: token
