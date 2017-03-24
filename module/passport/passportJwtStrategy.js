@@ -14,12 +14,10 @@ var options = {
 	jwtFromRequest : ExtractJwt.fromAuthHeader()
 };
 
-module.exports = (function() {
+module.exports = (() => {
 	// 전략 구성
-	var strategy = new Strategy(options, function(payload, done) {
-		var user = users.find(function(u) {
-			return u.id === payload.id;
-		});
+	var strategy = new Strategy(options, (payload, done) => {
+		var user = users.find(u => u.id === payload.id);
 		
 		if (user) {
 			done(null, {
@@ -34,7 +32,7 @@ module.exports = (function() {
 	passport.use(strategy);
 	
 	return {
-		authenticate: function() {
+		authenticate: () => {
 			return passport.authenticate('jwt', {
 				session: false
 			});

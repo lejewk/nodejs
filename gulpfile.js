@@ -4,8 +4,9 @@
 var gulp = require('gulp');
 var gls = require('gulp-live-server');
 
-gulp.task('serve', function() {
+gulp.task('serve', () => {
 	var server = gls.new('bin/www');
+	
 	server.start();
 	
 	// 서버 사이드 코드. 왜 감시해야하는지 모르겠음.

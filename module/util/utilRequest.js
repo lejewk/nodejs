@@ -2,8 +2,8 @@
  * Created by lejewk on 2017-02-18.
  */
 
-var ModuleSession = (function() {
-	var getUserByRequest = function(req) {
+var ModuleSession = (() => {
+	var getUserByRequest = req => {
 		try {
 			if (typeof req.session.passport.user == 'object') {
 				return req.session.passport.user;

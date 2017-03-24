@@ -3,10 +3,10 @@
  */
 
 var jsonwebtoken = require('jsonwebtoken');
-var conifg = require('../../config');
+var config = require('../../config');
 
-module.exports = (function() {
-	var sign = function(payload, options) {
+module.exports = (() => {
+	var sign = (payload, options) => {
 		var _options = {
 			expiresIn: 30
 		};

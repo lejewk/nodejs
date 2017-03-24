@@ -15,7 +15,7 @@ var passportJwtStrategy = require('../module/passport/passportJwtStrategy');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', (req, res, next) => {
 	var user = utilRequest.getUserByRequest(req);
 	
 	res.render('index', {
@@ -24,24 +24,22 @@ router.get('/', function (req, res, next) {
 	});
 });
 
-router.post('/login', passportLocalStrategy.authenticate(), function (req, res, next) {
+router.post('/login', passportLocalStrategy.authenticate(), (req, res, next) => {
 	res.redirect('/');
 });
 
-router.post('/logout', function (req, res, next) {
+router.post('/logout', (req, res, next) => {
 	req.logout();
 	res.redirect('/');
 });
 
 
-router.post('/token', function (req, res, next) {
+router.post('/token', (req, res, next) => {
 	if (req.body.username && req.body.password) {
 		var username = req.body.username;
 		var password = req.body.password;
 		
-		var user = users.find(function(u) {
-			return u.username === username && u.password === password;
-		});
+		var user = users.find(u => u.username === username && u.password === password);
 		
 		if (user) {
 			var payload = {
@@ -61,7 +59,7 @@ router.post('/token', function (req, res, next) {
 	}
 });
 
-router.get('/profile', passportJwtStrategy.authenticate(), function (req, res, next) {
+router.get('/profile', passportJwtStrategy.authenticate(), (req, res, next) => {
 	res.json(req.user);
 });
 
