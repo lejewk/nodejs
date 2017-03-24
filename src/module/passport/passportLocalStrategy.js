@@ -4,14 +4,16 @@
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var modelUser = require('../model/modeluser');
 
 module.exports = (() => {
 	// 전략 처리
 	var strategy = new LocalStrategy({
 		usernameField: 'id',
 		passwordField: 'password'
-	}, (id, password, done) => {
-		if (id == 'wook' && password == 'wook') {
+	}, async (id, password, done) => {
+		let user = await modelUser.findByUsernameAndPassword(id, password);
+		if (user) {
 			done(null, {id: id, password: password});
 		} else {
 			done(null, false, {message: 'login fail'});

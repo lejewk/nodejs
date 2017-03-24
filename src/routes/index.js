@@ -5,6 +5,8 @@ var utilJwt = require('../module/util/utilJwt');
 var utilRequest = require('../module/util/utilRequest');
 var users = require('../users');
 var config = require('../config');
+var modelUser = require('../module/model/modelUser');
+
 
 // 세션 처리
 var passportLocalStrategy = require('../module/passport/passportLocalStrategy');
@@ -12,7 +14,13 @@ var passportLocalStrategy = require('../module/passport/passportLocalStrategy');
 var passportJwtStrategy = require('../module/passport/passportJwtStrategy');
 
 
-var router = express.Router();
+/**
+ * async await 사용시 추가 필요.
+ */
+var asyncify = require('express-asyncify');
+var router = asyncify(express.Router());
+require("babel-polyfill");
+
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
@@ -28,32 +36,32 @@ router.post('/login', passportLocalStrategy.authenticate(), (req, res, next) => 
 	res.redirect('/');
 });
 
+router.get('/login/fail', (req, res, next) => {
+	res.redirect('/');
+});
+
 router.post('/logout', (req, res, next) => {
 	req.logout();
 	res.redirect('/');
 });
 
 
-router.post('/token', (req, res, next) => {
-	if (req.body.username && req.body.password) {
-		var username = req.body.username;
-		var password = req.body.password;
+router.post('/token', async (req, res, next) => {
+	var username = req.body.username;
+	var password = req.body.password;
+	
+	var user = await modelUser.findByUsernameAndPassword(username, password);
+	
+	if (user) {
+		var payload = {
+			id: user.id
+		};
 		
-		var user = users.find(u => u.username === username && u.password === password);
+		var token = utilJwt.sign(payload);
 		
-		if (user) {
-			var payload = {
-				id: user.id
-			};
-			
-			var token = utilJwt.sign(payload);
-			
-			res.json({
-				token: token
-			})
-		} else {
-			res.sendStatus(401);
-		}
+		res.json({
+			token: token
+		})
 	} else {
 		res.sendStatus(401);
 	}
