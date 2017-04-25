@@ -4,7 +4,18 @@
 var gulp = require('gulp');
 var gls = require('gulp-live-server');
 var babel = require('gulp-babel');
-var fileExists = require('file-exists');
+var clean = require('gulp-clean');
+var gulpsync = require('gulp-sync')(gulp);
+
+
+/**
+ * 빌드 제거
+ */
+gulp.task('clean', () => {
+	return gulp.src('build/*', {
+		read: false
+	}).pipe(clean());
+});
 
 /**
  * 코드 트랜스
@@ -18,6 +29,15 @@ gulp.task('babel', () => {
 			'transform-regenerator'
 		]
 	})).pipe(gulp.dest('build'));
+});
+
+/**
+ * www 데이터 카피
+ */
+gulp.task('copy_www', () => {
+	return gulp.src([
+		'src/bin/www'
+	]).pipe(gulp.dest('build/bin'));
 });
 
 /**
@@ -38,19 +58,12 @@ gulp.task('copy_public', () => {
 	]).pipe(gulp.dest('build/public'));
 });
 
+/**
+ * 서버 실행
+ */
 gulp.task('serve', () => {
-	// babel을 먼저 체크한다.
-	var serve = setTimeout(() => {
-		fileExists('build/bin/www.js', (err, exists) => {
-			if (exists === true) {
-				var server = gls.new('build/bin/www.js');
-				server.start();
-			} else {
-				console.log('check babel...');
-				serve();
-			}
-		})
-	}, 1000);
+	var server = gls.new('build/bin/www');
+	server.start();
 	
 	
 	
@@ -74,4 +87,4 @@ gulp.task('serve', () => {
 	// }
 });
 
-gulp.task('default', ['copy_views', 'copy_public', 'babel', 'serve']);
+gulp.task('default', gulpsync.sync(['clean', 'copy_www', 'copy_views', 'copy_public', 'babel', 'serve']));
